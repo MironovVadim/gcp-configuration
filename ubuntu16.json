@@ -1,0 +1,23 @@
+{
+"builders": [
+{
+"type": "googlecompute",
+"project_id": "angular-compass-248614",
+"image_name": "reddit-base-{{timestamp}}",
+"source_image": "ubuntu-1604-xenial-v20200317",
+"zone": "europe-west1-b",
+"ssh_username": "appuser",
+"machine_type": "f1-micro"
+}
+],
+"provisioners": [
+{
+"type": "shell",
+"script": "scripts/install_ruby.sh"
+},
+{
+"type": "shell",
+"script": "scripts/install_mongodb.sh"
+}
+]
+}
