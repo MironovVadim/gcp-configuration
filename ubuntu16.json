@@ -29,8 +29,8 @@
             "inline": ["cd ~",
 				"pwd",
                 "git clone --single-branch --branch packer https://github.com/MironovVadim/gcp-configuration.git",
-                ". ~/gcp-configuration/config-scripts/install_mongodb.sh",
-				". ~/gcp-configuration/config-scripts/install_ruby.sh",
+                ". ~/gcp-configuration/config-scripts/install_ruby.sh",
+				". ~/gcp-configuration/config-scripts/install_mongodb.sh",
                 ". ~/gcp-configuration/config-scripts/deploy.sh"
             ]
         }
