@@ -26,15 +26,12 @@
     ],
     "provisioners": [{
             "type": "shell",
-            "inline": ["cd /home/appuser",
-                "git clone https://github.com/MironovVadim/gcp-configuration.git",
-                "cd gcp-configuration",
-                "git checkout packer",
-				"cd ..",
+            "inline": ["cd ~",
 				"pwd",
-                ". gcp-configuration/config-scripts/install_ruby.sh",
-                ". gcp-configuration/config-scripts/install_mongodb.sh",
-                ". gcp-configuration/config-scripts/deploy.sh"
+                "git clone --single-branch --branch packer https://github.com/MironovVadim/gcp-configuration.git",
+                ". ~/gcp-configuration/config-scripts/install_mongodb.sh",
+				". ~/gcp-configuration/config-scripts/install_ruby.sh",
+                ". ~/gcp-configuration/config-scripts/deploy.sh"
             ]
         }
     ]
