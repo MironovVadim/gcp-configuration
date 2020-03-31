@@ -27,7 +27,20 @@ resource "google_compute_instance" "app" {
         access_config {}
     }
 	
-
+	connection {
+		host = self.network_interface.0.access_config.0.nat_ip
+		type = "ssh"
+		user = "appuser"
+		agent = false
+		private_key = "${file("~/.ssh/appuser")}"
+	}
+	provisioner "file" {
+		source = "files/puma.service"
+		destination = "/tmp/puma.service"
+	}
+	provisioner "remote-exec" {
+		script = "files/deploy.sh"
+	}
 }
 
 resource "google_compute_firewall" "firewall_puma" {
