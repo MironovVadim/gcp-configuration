@@ -1,5 +1,4 @@
 {
     "project_id": "terraform-project-272717",
-    "source_image": "ubuntu-1604-xenial-v20200317",
-	"app_disk_image" : 
+    "source_image": "ubuntu-1604-xenial-v20200317"
 }

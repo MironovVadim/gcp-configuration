@@ -1,0 +1,68 @@
+# Setup and configure ruby things for reddit app
+- name: "Reddit App: Configure app environment"
+  hosts: all
+  remote_user: appuser
+  gather_facts: no
+  become: yes
+
+  tasks:
+  - name: "Reddit App: Install ruby and rubygems and required packages"
+    apt:
+      name:
+      - ruby-full
+      - ruby-dev
+      - build-essential
+      state: present
+
+  - name: "Reddit App: Install Ruby bundler"
+    gem:
+      name: bundler
+      state: present
+      user_install: no
+
+# Setup and configure mongodb for reddit app
+- name: "MongoDB: Install mongodb"
+  hosts: all
+  remote_user: appuser
+  gather_facts: no
+
+  tasks:
+  - name: "MongoDB: Import public key"
+    apt_key:
+      keyserver: hkp://keyserver.ubuntu.com:80
+      id: 4B7C549A058F8B6B
+    become: yes
+    become_method: sudo
+    
+  - name: "MongoDB: Add repository"
+    apt_repository:
+      repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse"
+      filename: "/etc/apt/sources.list.d/mongodb-org-4.2.list"
+      update_cache: yes
+    become: yes
+    become_method: sudo
+    
+  - name: "MongoDB: Install"
+    apt:
+      name: mongodb-org
+      update_cache: yes
+    become: yes
+    become_method: sudo
+      
+  - name: "MongoDB: Running state"
+    service:
+      name: mongod
+      state: started
+    become: yes
+    become_method: sudo
+
+# Deploy reddit app
+- name: "Reddit App: Deploy application"
+  hosts: all
+  remote_user: appuser
+  gather_facts: no
+
+  tasks:
+  - name: "Reddit App: clone application"
+    debug:
+      msg: "В этом сценарии нужно добавить модули для деплоя приложения, после можно удалить вызов модуля debug, который выводит это сообщение"
