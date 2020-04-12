@@ -26,7 +26,12 @@
     ],
     "provisioners": [{
             "type": "ansible",
-            "playbook_file": "../ansible/reddit_app.yml"
+			"user": "appuser",
+            "playbook_file": "../ansible/reddit_app.yml",
+			"extra_arguments": [
+        "-vvvv",
+        "-e ansible_python_interpreter=/usr/bin/python3"
+      ]
         }
     ]
 }

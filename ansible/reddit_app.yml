@@ -1,10 +1,20 @@
-# Setup and configure ruby things for reddit app
-- name: "Reddit App: Configure app environment"
+# Update cache
+- name: "Update cache"
   hosts: all
-  remote_user: appuser
   gather_facts: no
   become: yes
+  
+  tasks:
+  - name: "Update cache"
+    apt:
+      update_cache: yes
+      force_apt_get: yes
 
+# Setup and configure ruby things for reddit app
+- name: "Reddit App: Configure app environment"
+  hosts: reddit-app
+  gather_facts: no
+  
   tasks:
   - name: "Reddit App: Install ruby and rubygems and required packages"
     apt:
@@ -12,57 +22,65 @@
       - ruby-full
       - ruby-dev
       - build-essential
-      state: present
 
   - name: "Reddit App: Install Ruby bundler"
     gem:
       name: bundler
-      state: present
       user_install: no
 
 # Setup and configure mongodb for reddit app
 - name: "MongoDB: Install mongodb"
   hosts: all
-  remote_user: appuser
   gather_facts: no
+  become: yes
 
   tasks:
-  - name: "MongoDB: Import public key"
-    apt_key:
-      keyserver: hkp://keyserver.ubuntu.com:80
-      id: 4B7C549A058F8B6B
-    become: yes
-    become_method: sudo
-    
-  - name: "MongoDB: Add repository"
-    apt_repository:
-      repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse"
-      filename: "/etc/apt/sources.list.d/mongodb-org-4.2.list"
-      update_cache: yes
-    become: yes
-    become_method: sudo
-    
+      
   - name: "MongoDB: Install"
     apt:
-      name: mongodb-org
-      update_cache: yes
-    become: yes
-    become_method: sudo
+      name: mongodb
       
   - name: "MongoDB: Running state"
     service:
-      name: mongod
+      name: mongodb
       state: started
-    become: yes
-    become_method: sudo
+      enabled: yes
 
 # Deploy reddit app
 - name: "Reddit App: Deploy application"
   hosts: all
-  remote_user: appuser
   gather_facts: no
+  become: no
+  vars:
+    update: no
 
   tasks:
   - name: "Reddit App: clone application"
-    debug:
-      msg: "В этом сценарии нужно добавить модули для деплоя приложения, после можно удалить вызов модуля debug, который выводит это сообщение"
+    git:
+      repo: https://github.com/Artemmkin/reddit.git
+      dest: ~/reddit
+      update: no
+      
+  - name: "Reddit App: update application"
+    git:
+      dest: ~/reddit
+      update: yes
+      clone: no
+    when: update == 'yes'
+      
+  - name: "Reddit App: install dependencies"
+    bundler:
+      gemfile: ~/reddit/Gemfile
+      
+  - name: "Reddit App: Set app as service"
+    copy:
+      src: ~/Vadim/gcp-configuration/terraform/files/puma.service
+      dest: /etc/systemd/system/puma.service
+    become: yes
+      
+  - name: "Reddit App: Start service"
+    systemd:
+      name: puma
+      state: restarted
+      enabled: yes
+    become: yes
