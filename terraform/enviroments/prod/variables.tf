@@ -11,9 +11,9 @@ variable public_key_path {
 }
 variable app_disk_image {
   description = "Disk image for reddit app"
-  default     = "app-base-1586098114"
+  default     = "app-base-1587263175"
 }
 variable db_disk_image {
   description = "Disk image for reddit db"
-  default     = "mongodb-base-1586052131"
+  default     = "mongodb-base-1587509848"
 }

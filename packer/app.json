@@ -1,34 +1,34 @@
 {
-    "variables": {
-        "project_id": null,
-        "source_image": null,
-        "machine_type": "f1-micro",
-        "image_description": "",
-        "disk_size": "10",
-        "disk_type": "pd-standard",
-        "network": "default",
-		"ssh_username": "appuser"
-    },
-    "builders": [{
-            "type": "googlecompute",
-            "project_id": "{{user `project_id`}}",
-            "image_name": "app-base-{{timestamp}}",
-            "source_image": "{{user `source_image`}}",
-            "zone": "europe-west1-b",
-            "ssh_username": "{{user `ssh_username`}}",
-            "machine_type": "{{user `machine_type`}}",
-            "image_description": "{{user `image_description`}}",
-            "disk_size": "{{user `disk_size`}}",
-            "disk_type": "{{user `disk_type`}}",
-            "network": "{{user `network`}}"
-        }
-    ],
-    "provisioners": [{
-            "type": "ansible",
-			"user": "{{user `ssh_username`}}",
-            "playbook_file": "../ansible/all.yml",
-			"extra_arguments": ["--tags", "app-install-tag"],
-			"groups": "app"
-			}
-    ]
+  "variables": {
+    "project_id": null,
+    "source_image": null,
+    "machine_type": "f1-micro",
+    "image_description": "",
+    "disk_size": "10",
+    "disk_type": "pd-standard",
+    "network": "default",
+    "ssh_username": "appuser"
+  },
+  "builders": [
+    {
+      "type": "googlecompute",
+      "project_id": "{{user `project_id`}}",
+      "image_name": "app-base-{{timestamp}}",
+      "source_image": "{{user `source_image`}}",
+      "zone": "europe-west1-b",
+      "ssh_username": "{{user `ssh_username`}}",
+      "machine_type": "{{user `machine_type`}}",
+      "image_description": "{{user `image_description`}}",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_type": "{{user `disk_type`}}",
+      "network": "{{user `network`}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "user": "{{user `ssh_username`}}",
+      "playbook_file": "../ansible/installation/app.yml"
+    }
+  ]
 }

@@ -1,0 +1,6 @@
+---
+- name: "Reddit App: Deploy application"
+  hosts: app
+  gather_facts: no
+  roles:
+    - app

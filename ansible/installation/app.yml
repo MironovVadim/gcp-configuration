@@ -1,0 +1,19 @@
+# Setup and configure ruby things for reddit app
+- name: "Reddit App: Configure app environment"
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: "Reddit App: Install ruby and rubygems and required packages"
+      apt:
+        update_cache: yes
+        name:
+          - ruby-full
+          - ruby-dev
+          - build-essential
+
+    - name: "Reddit App: Install Ruby bundler"
+      gem:
+        name: bundler
+        user_install: no
