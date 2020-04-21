@@ -1,0 +1,129 @@
+- name: "Terraform test:"
+  hosts: localhost
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: "Terraform: test deploy"
+      terraform:
+        project_path: ../terraform
+      register: outputs
+
+# Setup and configure ruby things for reddit app
+- name: "Reddit App: Configure app environment"
+  hosts: app
+  gather_facts: no
+  become: yes
+
+  tasks:
+  - name: "Reddit App: Install ruby and rubygems and required packages"
+    apt:
+      update_cache: yes
+      name:
+      - ruby-full
+      - ruby-dev
+      - build-essential
+    tags: app-install-tag
+
+  - name: "Reddit App: Install Ruby bundler"
+    gem:
+      name: bundler
+      user_install: no
+    tags: app-install-tag
+
+
+# Deploy reddit app
+- name: "Reddit App: Deploy application"
+  hosts: app
+  gather_facts: no
+
+  tasks:
+  - name: Add config for DB connection
+    template:
+      src: ./templates/db_config.j2
+      dest: /home/appuser/db_config
+    tags: app-tag
+
+  - name: "Reddit App: clone application"
+    git:
+      repo: https://github.com/Artemmkin/reddit.git
+      dest: ~/reddit
+      version: monolith
+      force: yes
+    notify: restart puma
+    tags: app-tag
+
+  - name: "Reddit App: install bundler"
+    bundler:
+      chdir: ~/reddit
+    tags: app-tag
+
+  - name: "Reddit App: Set app as service"
+    copy:
+      src: ./files/puma.service
+      dest: /etc/systemd/system/puma.service
+    become: yes
+    notify: restart puma
+    tags: app-tag
+
+  - name: enable puma
+    service:
+      name: puma
+      enabled: yes
+      daemon-reload: yes
+    become: yes
+    tags: app-tag
+
+  handlers:
+  - name: restart puma
+    become: true
+    service:
+      name: puma
+      state: restarted
+
+# Setup and configure mongodb for reddit app
+- name: "MongoDB: Install mongodb"
+  hosts: db
+  gather_facts: no
+  become: yes
+  vars:
+    mongo_bind_ip: 0.0.0.0
+
+  tasks:
+  - name: "MongoDB: Change config file"
+    template:
+      src: templates/mongod.conf.j2
+      dest: /etc/mongod.conf
+      mode: 0644
+    notify: restart mongod
+    tags: db-tag
+
+  - name: "MongoDB: Import public key"
+    apt_key:
+      keyserver: hkp://keyserver.ubuntu.com:80
+      id: 4B7C549A058F8B6B
+
+  - name: "MongoDB: Add repository"
+    apt_repository:
+      repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse"
+      filename: "/etc/apt/sources.list.d/mongodb-org-4.2.list"
+      update_cache: yes
+
+  - name: "MongoDB: Install"
+    apt:
+      name: mongodb-org
+      update_cache: yes
+
+  - name: "MongoDB: Enable service"
+    service:
+      name: mongod
+      state: restarted
+      daemon-reload: yes
+    tags: db-tag
+
+  handlers:
+  - name: restart mongod
+    service:
+      name: mongod
+      state: restarted
+
