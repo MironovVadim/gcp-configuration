@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = file("~/Vadim/AppData/Roaming/gcloud/application_default_credentials.json")
+  credentials = file("~//AppData/Roaming/gcloud/application_default_credentials.json")
   project = var.project
   region  = var.region
 }
@@ -15,8 +15,7 @@ module "db" {
 }
 module "vpc" {
   source        = "../../modules/vpc"
-//  source_ranges = ["91.76.158.192/32"]
-  source_ranges = ["0.0.0.0/0"]
+  source_ranges = ["109.252.20.52/32"]
 }
 terraform {
   backend "local" {

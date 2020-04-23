@@ -34,7 +34,7 @@ data "template_file" "group_vars_db" {
   }
 }
 
-resource "local_file" "group_vars_app" {
-  content = data.template_file.group_vars_app.rendered
-  filename = "../../../ansible/environments/prod/group_vars/app"
+resource "local_file" "group_vars_db" {
+  content = data.template_file.group_vars_db.rendered
+  filename = "../../../ansible/environments/prod/group_vars/db"
 }

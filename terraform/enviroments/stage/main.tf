@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = file("~/Vadim/AppData/Roaming/gcloud/application_default_credentials.json")
+  credentials = file("~/AppData/Roaming/gcloud/application_default_credentials.json")
   project = var.project
   region  = var.region
 }
