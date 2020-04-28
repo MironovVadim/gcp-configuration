@@ -6,3 +6,5 @@
 *.retry
 hosts
 .idea
+.vagrant/
+*.logs

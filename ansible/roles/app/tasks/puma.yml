@@ -1,0 +1,28 @@
+---
+# tasks file for app
+- name: Show info about the env this host belongs to
+  debug:
+    msg: "This host is in {{ env }} environment!!!"
+
+- name: Add config for DB connection
+  template:
+    src: db_config.j2
+    dest: /home/{{ deploy_user }}/db_config
+
+- name: "Reddit App: clone application"
+  git:
+    repo: https://github.com/Artemmkin/reddit.git
+    dest: /home/{{ deploy_user }}/reddit
+    version: monolith
+    force: yes
+  notify: restart puma
+
+- name: "Reddit App: install bundler"
+  bundler:
+    chdir: /home/{{ deploy_user }}/reddit
+
+- name: "Reddit App: Set app as service"
+  template:
+    src: puma.service.j2
+    dest: /etc/systemd/system/puma.service
+  become: yes

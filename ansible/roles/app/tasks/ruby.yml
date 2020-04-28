@@ -1,0 +1,18 @@
+---
+# tasks file for app install
+- name: "Reddit App: Install ruby and rubygems and required packages"
+  apt:
+    update_cache: yes
+    name:
+      - ruby-full
+      - ruby-dev
+      - build-essential
+  become: yes
+  tags: ruby
+
+- name: "Reddit App: Install Ruby bundler"
+  gem:
+    name: bundler
+    user_install: no
+  become: yes
+  tags: ruby
